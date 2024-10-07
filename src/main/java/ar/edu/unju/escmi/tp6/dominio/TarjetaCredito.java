@@ -12,8 +12,6 @@ public class TarjetaCredito {
 	 public TarjetaCredito() {
      }
 
-    
-
     public TarjetaCredito(long numero, LocalDate fechaCaducacion, Cliente cliente, double limiteCompra) {
 		super();
 		this.numero = numero;
@@ -55,8 +53,6 @@ public class TarjetaCredito {
 	public double getLimiteCompra() {
 		return limiteCompra;
 	}
-
-
 
 	@Override
 	public String toString() {

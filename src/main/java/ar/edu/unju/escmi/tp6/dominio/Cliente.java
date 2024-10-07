@@ -16,7 +16,6 @@ public class Cliente {
 
 	}
 
-
 	public Cliente(long dni, String nombre, String direccion, String telefono) {
 		super();
 		this.dni = dni;
@@ -24,8 +23,6 @@ public class Cliente {
 		this.direccion = direccion;
 		this.telefono = telefono;
 	}
-
-
 
 	public long getDni() {
 		return dni;
