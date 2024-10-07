@@ -18,4 +18,9 @@ public class CollectionCredito {
 			}
 	    	
 	    }
+	 
+	 public static void consultarCredito(long dni) {
+		 creditos.stream().filter(credito -> credito.getTarjetaCredito().getCliente().getDni() == dni)
+		 				  .forEach(credito -> credito.mostarCredito());
+	 }
 }

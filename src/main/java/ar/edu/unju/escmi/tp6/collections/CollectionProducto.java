@@ -2,20 +2,21 @@ package ar.edu.unju.escmi.tp6.collections;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import ar.edu.unju.escmi.tp6.dominio.Producto;
 
 public class CollectionProducto {
 	 public static List<Producto> productos = new ArrayList<Producto>();
-
 	 public static void precargarProductos() {
 	        if (productos.isEmpty()) {
 	            productos = new ArrayList<Producto>();
-	            productos.add(new Producto(1111, "Aire", " Aire Acondicionado Split On/Off 2750W FC Hisense", 220000, "Argentina"));
-	            productos.add(new Producto(1112, "Aire", "Aire Acondicionado Split On/Off 3400W FC Hisense", 180000, "China"));
-	            productos.add(new Producto(1113, "Aire", "Aire Acondicionado Split On/Off 3400W FC Philco", 180000, "Argentina"));
-	            productos.add(new Producto(1114, "Aire", "Aire Acondicionado AA Inverter 3000 FC BGH", 250000, "Argentina"));
-	            productos.add(new Producto(2111, "Celular", " Galaxi A33 Samsung", 150000, "Argentina"));
+	            productos.add(new Producto(1111, "Aire Acondicionado", "Split On/Off 2750W FC Hisense", 220000, "Argentina"));
+	            productos.add(new Producto(1112, "Aire Acondicionado", "Split On/Off 3400W FC Hisense", 180000, "China"));
+	            productos.add(new Producto(1113, "Aire Acondicionado", "Split On/Off 3400W FC Philco", 180000, "Argentina"));
+	            productos.add(new Producto(1114, "Aire Acondicionado", "AA Inverter 3000 FC BGH", 250000, "Argentina"));
+	            productos.add(new Producto(2111, "Celular", "Galaxi A33 Samsung", 150000, "Argentina"));
 	            productos.add(new Producto(2112, "Celular", "L7 + Primer Black - RVA TCL", 110000, "Argentina"));
 	            productos.add(new Producto(2113, "Celular", "PANTALLA 5\" QUAD CORE 1RAM 32GB Alcatel", 90000, "Argentina"));
 	            productos.add(new Producto(2114, "Celular", "QTEST NEGRO Quantum", 75000, "Argentina"));
@@ -80,7 +81,34 @@ public class CollectionProducto {
 	        return productoEncontrado;
 	    }
 	    
-	    public static void mostrarProductos() {
-	    	productos.stream().forEach(producto -> producto.toString());
+	    public static List<Producto> productosEnAhora30(){
+	    	
+	    	Predicate<Producto> comprobarAhora30 = producto -> {
+	    		if(producto.getOrigenFabricacion().equals("Argentina")) {
+	    			if(producto.getTipoProducto().equals("Celular")) {
+	    				if(producto.getPrecioUnitario() <= 800000) return true;
+	    				else return false;
+	    			}
+	    			else if(producto.getPrecioUnitario() <= 1500000) return true;
+	    			else return false;
+	    		}
+	    		else return false;
+	    	};
+	    	
+	    	return productos.stream().filter(comprobarAhora30).collect(Collectors.toList());
+	    }
+	    
+	    public static void mostrarProductosDisponiblesEnAhora30() {
+	    	
+	    	Predicate<Producto> comprobarDisponibilidadEnAhora30 = 
+	    			producto -> CollectionStock.buscarStock(producto).getCantidad() > 0;
+	    	
+	    	productosEnAhora30().stream().filter(comprobarDisponibilidadEnAhora30)
+	    						.forEach(producto -> producto.toString());
+	    }
+	    
+	    public static void mostrarStockProductosEnAhora30() {
+	    	productosEnAhora30().stream()
+	    						.forEach(producto -> CollectionStock.buscarStock(producto).toString());
 	    }
 }
