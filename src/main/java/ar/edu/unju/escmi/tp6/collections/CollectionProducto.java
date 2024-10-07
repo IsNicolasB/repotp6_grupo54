@@ -79,4 +79,8 @@ public class CollectionProducto {
 	        
 	        return productoEncontrado;
 	    }
+	    
+	    public static void mostrarProductos() {
+	    	productos.stream().forEach(producto -> producto.toString());
+	    }
 }

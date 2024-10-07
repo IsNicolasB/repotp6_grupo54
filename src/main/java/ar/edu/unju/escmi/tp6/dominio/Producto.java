@@ -66,6 +66,7 @@ public class Producto {
         		+ "\nTipo de Producto " + tipoProducto
         		+ "\nDescripcion: " + descripcion 
         		+ "\nPrecio Unitario: " + precioUnitario
-                + "\nOrigen fabricacion: " + origenFabricacion;
+                + "\nOrigen fabricacion: " + origenFabricacion
+                + "\n--------------------------";
     }
 }
