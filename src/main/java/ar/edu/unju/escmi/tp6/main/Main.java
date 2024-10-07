@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import ar.edu.unju.escmi.tp6.collections.CollectionCliente;
+import ar.edu.unju.escmi.tp6.collections.CollectionCredito;
 import ar.edu.unju.escmi.tp6.collections.CollectionFactura;
 import ar.edu.unju.escmi.tp6.collections.CollectionProducto;
 import ar.edu.unju.escmi.tp6.collections.CollectionStock;
@@ -24,6 +25,7 @@ public class Main {
 	
 	static Scanner scanner = new Scanner(System.in);
 	static long contNroFactura= 1;
+	static LocalDate finDePromocion = LocalDate.of(2024, 12, 22);
 	
 	public static void main(String[] args) {
 		
@@ -32,6 +34,7 @@ public class Main {
         CollectionProducto.precargarProductos();
         CollectionStock.precargarStocks();
         int opcion = 0;
+        
         do {
         	System.out.println("\n====== Menu Principal =====");
             System.out.println("1- Realizar una venta");
@@ -45,11 +48,15 @@ public class Main {
             opcion = scanner.nextInt();
             switch (opcion) {
             case 1: System.out.println("--- VENTA DE PRODUCTO ---");
-            	comprarProductos();
+	            if (LocalDate.now().isAfter(finDePromocion)) {
+	            	System.out.println("!LA PROMOCION 'AHORA 30' ACABO EL 22/12/24, EL SISTEMA DE COMPRA YA NO ESTA DISPONIBLE, GRACIAS POR SU VISITA");
+	            	
+	            } else
+	            	ventaProducto();
 
             	break;
-            case 2:
-            	
+            case 2: System.out.println("----- Compras del Cliente ----");
+            	comprasDeCliente();
             	break;
             	
             default: System.out.println("Esta no es una opcion."); break;
@@ -61,16 +68,24 @@ public class Main {
 	
 	public static Detalle comprarProducto(double limite) {
     	
-    	System.out.println("Ingrese el codigo del electrodomestico que quiere comprar: ");
-    	long codP = scanner.nextLong();
-    	Producto producto = CollectionProducto.buscarProducto(codP);
-    	while (producto == null) {
-    		System.out.println("-	!No existe un producto con este codigo¡		-");
-    		System.out.println("Ingrese otro codigo: ");
-    		codP = scanner.nextLong();
-    		producto = CollectionProducto.buscarProducto(codP);
-    	}
+        long codP = -1;
+        Producto producto = null;
+
+        while (producto == null) {
+            System.out.println("Ingrese el código del electrodoméstico que quiere comprar: ");
+            try {
+                codP = scanner.nextLong();
+                producto = CollectionProducto.buscarProducto(codP);
+                if (producto == null) System.out.println("- 	¡No existe un producto con este código!	  -\nIngrese otro código: ");
+                
+            } catch (InputMismatchException e) {
+                System.out.println("- 	¡El código debe ser un número!	 -");
+                scanner.next();
+            }
+        }
     	
+    	if (limite>(double)1500000)limite=1500000;
+    	if(producto.getTipoProducto().equals("Celular") && limite>(double)800000) limite=800000;
     	
     	Stock stock = CollectionStock.buscarStock(producto);
     	if (stock.getCantidad()==0) {
@@ -79,67 +94,80 @@ public class Main {
     	}
     	
     	
-    	producto.toString();
+    	System.out.println(producto.toString());
     	System.out.println("\nStock del producto: "+stock.getCantidad());
     	System.out.println("¿Cuantas unidades desea comprar? : ");
     	
-    	int cantidad=scanner.nextInt();
-    	while (cantidad<0 || (stock.getCantidad() - cantidad <0) ) {
-    		System.out.println("¡ERROR!\n Recuerde ingresars una cantidad que sea mayor igual a 0, menor igual al stock del producto: ");
-    		cantidad=scanner.nextInt();
-    	}
+    	int cantidad=-1;
+    	do {
+            try {
+                cantidad=scanner.nextInt();
+                if (cantidad<0 || (stock.getCantidad() - cantidad <0))
+        			System.out.println("¡ERROR!\n Recuerde ingresar una cantidad que sea mayor igual a 0, menor igual al stock del producto: ");
+        		else if ((cantidad * producto.getPrecioUnitario()) > limite) {
+        			System.out.println("¡ERROR!\n El precio total de esta compra es superior al limite de su tarjeta, su limite es '"+limite+"', elija una cantidad menor de productos: ");
+        			System.out.println("El precio unitario del producto es: "+producto.getPrecioUnitario());
+        		}
+            } catch (InputMismatchException e) {
+                System.out.println("- 	¡La cantidad debe ser un número!	 -");
+                scanner.next();
+            }
+    	} while (cantidad<0 || (stock.getCantidad() - cantidad <0) || (cantidad * producto.getPrecioUnitario()) > limite);
     	
     	Detalle detalle = new Detalle(cantidad, 0, producto);
     	
     	return detalle;
 	}
 	
-	public static void comprarProductos() {
-    	//Ingreso de datos del cliente
-    	System.out.println("Ingrese su dni: ");
-    	long dni = scanner.nextLong();
-    	Cliente cliente = CollectionCliente.buscarCliente(dni);
-    	while (cliente == null) {
-    		System.out.println("-	!No existe un cliente con este dni¡		-");
-    		System.out.println("Ingrese otro dni:");
-    		dni = scanner.nextLong();
-    		cliente = CollectionCliente.buscarCliente(dni);
-    	}
-    	
-    	
-    	System.out.println("Ingrese su numero de tarjeta de credito: ");
-    	long numero= scanner.nextLong();
-    	TarjetaCredito tarjeta = CollectionTarjetaCredito.buscarTarjetaCredito(numero);
-    	while (tarjeta == null || tarjeta.getCliente() == null || tarjeta.getCliente().getDni() != dni) {
-    	    if (tarjeta == null) {
-    	        System.out.println("- ¡Esta tarjeta de crédito no existe! -");
-    	    } else if (tarjeta.getCliente() == null) {
-    	        System.out.println("- ¡Esta tarjeta de crédito no está asociada a ningún cliente! -");
-    	    } else if (tarjeta.getCliente().getDni() != dni) {
-    	        System.out.println("- ¡Esta tarjeta de crédito no está a su nombre! -");
-    	    }
-    	    System.out.println("Ingrese un número de tarjeta que sea de " + cliente.getNombre() + ": ");
-    	    numero = scanner.nextLong();
-    	    tarjeta = CollectionTarjetaCredito.buscarTarjetaCredito(numero);
-    	}
-    	//
-    	/*
-    	 * 45111222
-    	 * 232323
-    	 * 1111
-    	 */
-    	//Compra de productos
+	public static void ventaProducto() {
+		
+		//Entrada de datos del Cliente
+        long dni = -1;  
+        Cliente cliente = null;
+
+        while (cliente == null) {
+            try {
+                System.out.println("Ingrese su dni: ");
+                dni = scanner.nextLong(); 
+
+                cliente = CollectionCliente.buscarCliente(dni);
+                if (cliente == null) {
+                    System.out.println("- ¡No existe un cliente con este dni! -");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("¡ERROR! Ingrese un número válido para el DNI.");
+                scanner.next(); 
+            }
+        }
+
+        long numero = -1;  
+        TarjetaCredito tarjeta = null;
+
+        while (tarjeta == null || tarjeta.getCliente() == null || tarjeta.getCliente().getDni() != dni) {
+            try {
+                System.out.println("Ingrese su número de tarjeta de crédito: ");
+                numero = scanner.nextLong();
+
+                tarjeta = CollectionTarjetaCredito.buscarTarjetaCredito(numero);
+                if (tarjeta == null) {
+                    System.out.println("- ¡Esta tarjeta de crédito no existe! -");
+                } else if (tarjeta.getCliente() == null) {
+                    System.out.println("- ¡Esta tarjeta de crédito no está asociada a ningún cliente! -");
+                } else if (tarjeta.getCliente().getDni() != dni) {
+                    System.out.println("- ¡Esta tarjeta de crédito no está a su nombre! -");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("¡ERROR! Ingrese un número válido para el número de tarjeta.");
+                scanner.next(); 
+            }
+        }
+
+    	//Compra de producto
         List<Detalle> detalles = new ArrayList<Detalle>();
     	double limite = tarjeta.getLimiteCompra();
     	Detalle detalle1= comprarProducto(limite);
-    	if (detalle1.getImporte() > limite) {
-    		System.out.println("---    !El precio de la compra es superior al limite de la tarjeta¡	   ---");
-    		System.out.println("Su compra excede por"+(detalle1.getImporte() - limite)+"el limite de la tarjeta, no se cargara el ultimo producto seleccionado");
-    	} else if (detalle1!=null) {
-    		limite -= detalle1.getImporte();
-    		detalles.add(detalle1);
-    	}
-    	
+    	detalles.add(detalle1);
+    	/*
     	do {
     		int seguirCompra = 0; 
 
@@ -174,15 +202,48 @@ public class Main {
         	}
         	
     	} while (true);
-    	
+    	*/
     	Factura factura = new Factura(LocalDate.now(), contNroFactura++, cliente, detalles);
     	CollectionFactura.agregarFactura(factura);
     	
     	Credito credito= new Credito(tarjeta, factura, new ArrayList<Cuota>());
+    	CollectionCredito.agregarCredito(credito);
     	
     	System.out.println("Se realizo la compra correctamente");
     	System.out.println(factura.toString());
 	}
 	
+	public static void comprasDeCliente() {
+        long dni = -1;  
+
+        while (true) {
+            try {
+                System.out.println("Ingrese su dni: ");
+                dni = scanner.nextLong(); 
+
+
+                if (CollectionCliente.buscarCliente(dni) == null) {
+                    System.out.println("- ¡No existe un cliente con este dni! -");
+                }
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("¡ERROR! Ingrese un número válido para el DNI.");
+                scanner.next(); 
+            }
+        }
+		
+    	System.out.println("Las compras de este cliente son las siguientes: ");
+    	boolean compras=false;
+		for (Factura factura : CollectionFactura.facturas) {
+			if (factura.getCliente().getDni() == dni) {
+				compras=true;
+				for (Detalle detalle : factura.getDetalles()) {
+					System.out.println(detalle.toString());
+				}
+			}
+		}
+		
+		if (!compras) System.out.println("------------------------\n 		ESTE CLIENTE NO TIENE COMPRAS\n------------------------");
+	}
 }
 ;
