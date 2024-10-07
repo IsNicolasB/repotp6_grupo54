@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Scanner;
 
 import ar.edu.unju.escmi.tp6.collections.CollectionCliente;
-import ar.edu.unju.escmi.tp6.collections.CollectionCredito;
 import ar.edu.unju.escmi.tp6.collections.CollectionFactura;
 import ar.edu.unju.escmi.tp6.collections.CollectionProducto;
 import ar.edu.unju.escmi.tp6.collections.CollectionStock;
@@ -180,7 +179,7 @@ public class Main {
     	CollectionFactura.agregarFactura(factura);
     	
     	Credito credito= new Credito(tarjeta, factura, new ArrayList<Cuota>());
-    	CollectionCredito.agregarCredito(credito);
+    	
     	System.out.println("Se realizo la compra correctamente");
     	System.out.println(factura.toString());
 	}
