@@ -58,7 +58,23 @@ public class Main {
             case 2: System.out.println("----- Compras del Cliente ----");
             	comprasDeCliente();
             	break;
+            
+            case 3: 
+            	if (LocalDate.now().isAfter(finDePromocion))
+            		System.out.println("!LA PROMOCION 'AHORA 30' ACABO EL 22/12/24, EL SISTEMA DE COMPRA YA NO ESTA DISPONIBLE, GRACIAS POR SU VISITA");
+	            else
+	            	CollectionProducto.mostrarProductosDisponiblesEnAhora30();
             	
+            	break;
+            case 4:
+            	if (LocalDate.now().isAfter(finDePromocion))
+            		System.out.println("!LA PROMOCION 'AHORA 30' ACABO EL 22/12/24, EL SISTEMA DE COMPRA YA NO ESTA DISPONIBLE, GRACIAS POR SU VISITA");
+	            else
+	            	CollectionProducto.mostrarStockProductosEnAhora30();
+            	break;
+            case 5:
+            	revisarCreditoCliente();
+            	break;
             default: System.out.println("Esta no es una opcion."); break;
             }
         }while(opcion != 6);
@@ -213,8 +229,9 @@ public class Main {
     	System.out.println(factura.toString());
 	}
 	
-	public static void comprasDeCliente() {
-        long dni = -1;  
+	
+	public static long dniCliente() {
+		long dni = -1;  
 
         while (true) {
             try {
@@ -231,6 +248,12 @@ public class Main {
                 scanner.next(); 
             }
         }
+        return dni;
+	}
+	
+	public static void comprasDeCliente() {
+        
+		long dni = dniCliente();
 		
     	System.out.println("Las compras de este cliente son las siguientes: ");
     	boolean compras=false;
@@ -245,5 +268,9 @@ public class Main {
 		
 		if (!compras) System.out.println("------------------------\n 		ESTE CLIENTE NO TIENE COMPRAS\n------------------------");
 	}
+	
+	public static void revisarCreditoCliente() {
+		  long dni = dniCliente();
+		  CollectionCredito.consultarCredito(dni);
+	}
 }
-;
