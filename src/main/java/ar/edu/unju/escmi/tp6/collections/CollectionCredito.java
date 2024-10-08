@@ -20,7 +20,10 @@ public class CollectionCredito {
 	    }
 	 
 	 public static void consultarCredito(long dni) {
-		 creditos.stream().filter(credito -> credito.getTarjetaCredito().getCliente().getDni() == dni)
-		 				  .forEach(credito -> credito.mostarCredito());
+		 if(creditos.stream().filter(credito -> credito.getTarjetaCredito().getCliente().getDni() == dni).count() != 0) {
+			 creditos.stream().filter(credito -> credito.getTarjetaCredito().getCliente().getDni() == dni)
+		 				  	.forEach(credito -> credito.mostarCredito());
+		 }
+		 else System.out.println("\n-----El cliente no registra créditos-----");
 	 }
 }
