@@ -8,12 +8,13 @@ import ar.edu.unju.escmi.tp6.dominio.Factura;
 public class CollectionFactura {
 
 	public static List<Factura> facturas = new ArrayList<Factura>();
-
+	private static long nroFactura = 1;
 	
 
 	public static void agregarFactura(Factura factura) {
 		
 		try {
+			factura.setNroFactura(nroFactura++);
 			facturas.add(factura);
 		} catch (Exception e) {
 			System.out.println("\nNO SE PUEDE GUARDAR LA FACTURA");
