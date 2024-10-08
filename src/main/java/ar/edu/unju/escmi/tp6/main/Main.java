@@ -24,7 +24,6 @@ import ar.edu.unju.escmi.tp6.dominio.TarjetaCredito;
 public class Main {
 	
 	static Scanner scanner = new Scanner(System.in);
-	static long contNroFactura= 1;
 	static LocalDate finDePromocion = LocalDate.of(2024, 12, 22);
 	
 	public static void main(String[] args) {
@@ -219,7 +218,7 @@ public class Main {
         	
     	} while (true);
     	*/
-    	Factura factura = new Factura(LocalDate.now(), contNroFactura++, cliente, detalles);
+    	Factura factura = new Factura(LocalDate.now(), 0, cliente, detalles);
     	CollectionFactura.agregarFactura(factura);
     	
     	Credito credito= new Credito(tarjeta, factura, new ArrayList<Cuota>());
