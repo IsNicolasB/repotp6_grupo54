@@ -33,7 +33,7 @@ public class Stock {
 		return "\nCódigo: " + producto.getCodigo()
 				+ "\nTipo de Prodcuto: " + producto.getTipoProducto()
 				+ "\nDescripcion: " + producto.getDescripcion()
-				+ "\nStock" + (cantidad > 0 ? cantidad : "SIN STOCK")
+				+ "\nStock: " + (cantidad > 0 ? cantidad : "SIN STOCK")
 				+ "\n------------------------";
 	}
 

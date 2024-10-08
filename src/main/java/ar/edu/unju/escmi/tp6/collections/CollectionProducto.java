@@ -104,11 +104,11 @@ public class CollectionProducto {
 	    			producto -> CollectionStock.buscarStock(producto).getCantidad() > 0;
 	    	
 	    	productosEnAhora30().stream().filter(comprobarDisponibilidadEnAhora30)
-	    						.forEach(producto -> producto.toString());
+	    						.forEach(producto -> System.out.println(producto.toString()));
 	    }
 	    
 	    public static void mostrarStockProductosEnAhora30() {
 	    	productosEnAhora30().stream()
-	    						.forEach(producto -> CollectionStock.buscarStock(producto).toString());
+	    						.forEach(producto -> System.out.println(CollectionStock.buscarStock(producto).toString()));
 	    }
 }
