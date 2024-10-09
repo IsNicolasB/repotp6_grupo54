@@ -21,5 +21,4 @@ class StockTest {
 		CollectionStock.reducirStock(CollectionStock.stocks.get(0), 10);
 		assertEquals(CollectionStock.stocks.get(0).getCantidad(), 2);
 	}
-
 }
