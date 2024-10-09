@@ -24,7 +24,6 @@ import ar.edu.unju.escmi.tp6.dominio.TarjetaCredito;
 public class Main {
 	
 	static Scanner scanner = new Scanner(System.in);
-	static long contNroFactura= 1;
 	static LocalDate finDePromocion = LocalDate.of(2024, 12, 22);
 	
 	public static void main(String[] args) {
@@ -100,6 +99,11 @@ public class Main {
             }
         }
     	
+        if (!producto.getOrigenFabricacion().equals("Argentina")) {
+        	System.out.println("---		EL PRODUCTO QUE USTED SELECCIONO NO ES DE FABRIACION NACIONAL	  ---");
+        	return null;
+        }
+        
     	if (limite>(double)1500000)limite=1500000;
     	if(producto.getTipoProducto().equals("Celular") && limite>(double)800000) limite=800000;
     	
@@ -129,6 +133,7 @@ public class Main {
                 scanner.next();
             }
     	} while (cantidad<0 || (stock.getCantidad() - cantidad <0) || (cantidad * producto.getPrecioUnitario()) > limite);
+    	CollectionStock.reducirStock(stock, cantidad);
     	
     	Detalle detalle = new Detalle(cantidad, 0, producto);
     	
@@ -182,51 +187,19 @@ public class Main {
         List<Detalle> detalles = new ArrayList<Detalle>();
     	double limite = tarjeta.getLimiteCompra();
     	Detalle detalle1= comprarProducto(limite);
+    	
+    	tarjeta.setLimiteCompra(tarjeta.getLimiteCompra() - detalle1.getImporte());
+    	
     	detalles.add(detalle1);
-    	/*
-    	do {
-    		int seguirCompra = 0; 
 
-    		while (true) {
-    		    try {
-    		        System.out.println("¿Desea seguir con la compra?");
-    		        System.out.println("1. SI");
-    		        System.out.println("2. NO");
-
-    		        seguirCompra = scanner.nextInt();
-
-    		        if (seguirCompra == 1 || seguirCompra == 2) {
-    		        	break;
-    		        } else {
-    		            System.out.println("Ingrese 1 para SI o 2 para NO.");
-    		        }
-
-    		    } catch (InputMismatchException e) {
-    		        System.out.println("Ingrese un número (1 para SI, 2 para NO).");
-    		        scanner.next();
-    		    }
-    		}
-    		
-    		if (seguirCompra==2) break;
-    		
-        	Detalle detalle2= comprarProducto(limite);
-        	if (detalle2.getImporte() > limite) {
-        		System.out.println("!El precio de la compra es superior al limite de la tarjeta¡");
-        	} else if (detalle2!=null) {
-        		limite -= detalle2.getImporte();
-        		detalles.add(detalle2);
-        	}
-        	
-    	} while (true);
-    	*/
-    	Factura factura = new Factura(LocalDate.now(), contNroFactura++, cliente, detalles);
+    	Factura factura = new Factura(LocalDate.now(), 0, cliente, detalles);
     	CollectionFactura.agregarFactura(factura);
     	
     	Credito credito= new Credito(tarjeta, factura, new ArrayList<Cuota>());
     	CollectionCredito.agregarCredito(credito);
     	
     	System.out.println("Se realizo la compra correctamente");
-    	System.out.println(factura.toString());
+    	credito.mostarCredito();
 	}
 	
 	
