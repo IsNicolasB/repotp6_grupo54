@@ -74,10 +74,13 @@ public class Main {
             case 5:
             	revisarCreditoCliente();
             	break;
+            case 6:
+				System.out.println("*** CERRANDO PROGRAMA ***");
+				scanner.close();
+				break;
             default: System.out.println("Esta no es una opcion."); break;
             }
         }while(opcion != 6);
-        scanner.close();
 
 	}
 	
